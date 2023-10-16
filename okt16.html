@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id = "text">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</div>
+    <button id = "button">hhh</button>
+
+    <script>
+        const button = document.getElementById("button")
+        const text = document.getElementById("text")
+
+        button.addEventListener("click", function (){
+            text.innerHTML = "nuh uh"
+        })
+
+        text.addEventListener("mouseover", function(){
+            text.style.color = "blue"
+        })
+
+        text.addEventListener("mouseleave", function(){
+            text.style.color = "black"
+        })
+    </script>
+</body>
+</html>
