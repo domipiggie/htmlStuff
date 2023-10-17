@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>Érték: <span id="currentValue"></span></p>
+    <input type="button" value="+" id="increase">
+    <input type="button" value="-" id="decrease">
+    <input type="button" value="Reset" id="reset">
+
+    <script>
+        const increaseButton = document.getElementById("increase")
+        const decreaseButton = document.getElementById("decrease")
+        const resetButton = document.getElementById("reset")
+        const currentValueText = document.getElementById("currentValue")
+
+        const defaultValue = 0
+        const stepValue = 1
+        let currentValue = defaultValue
+
+        currentValueText.innerHTML = currentValue
+
+        increaseButton.addEventListener("click", function(){
+            currentValue += stepValue
+            currentValueText.innerHTML = currentValue
+        })
+        decreaseButton.addEventListener("click", function(){
+            currentValue -= stepValue
+            currentValueText.innerHTML = currentValue
+        })
+        resetButton.addEventListener("click", function(){
+            currentValue = defaultValue
+            currentValueText.innerHTML = currentValue
+        })
+    </script>
+</body>
+</html>
