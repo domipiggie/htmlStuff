@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fórum</title>
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <script src="bootstrap.min.js"></script>
+
+    <style>
+        .commentBox{
+            background-color: lightgray;
+            border-radius: 5px;
+            margin-top: 10px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <h1 class="m-3">Fórum</h1>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8 m-3">
+                <div class="form-group">
+                    <h4>Hozzászólás: </h4>
+                    <textarea class="form-control" id="comment"></textarea>
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8 m-3">
+                <div class="form-group">
+                    <label for="robot">Nem vagyok robot:</label>
+                    <input type="checkbox" name="robot" id="robot">
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8 m-2" id="out">
+                
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+    </div>
+
+    <script>
+        const textArea = document.getElementById("comment")
+        const robotCheck = document.getElementById("robot")
+        const commentOut = document.getElementById("out")
+
+        const h = "h"
+
+        robotCheck.addEventListener("change", function(){
+            if (textArea.value == "" || robotCheck.value == false){
+                robotCheck.checked = false
+                return
+            }
+
+            const commentDiv = document.createElement("div")
+            const textP = document.createElement("p")
+            const timeP = document.createElement("p")
+
+            timeP.innerHTML = new Date(Date.now()).toLocaleString()
+            textP.innerHTML = textArea.value
+
+            commentDiv.classList = "commentBox"
+            commentDiv.appendChild(timeP)
+            commentDiv.appendChild(textP)
+
+            commentOut.appendChild(commentDiv)
+
+            textArea.value = ""
+            robotCheck.checked = false
+        })
+    </script>
+</body>
+</html>
