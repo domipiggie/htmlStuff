@@ -21,6 +21,10 @@
     <img id="cat">
     <button id="randomPerson">Random Person</button>
     <h1 id="person"></h1>
+    <input type="text" id="word">
+    <button id="getWord">Word thing</button>
+    <ul id="wordOut">
+    </ul>
 
     <script>
         const apiAddr = "https://wttr.in/"
@@ -31,6 +35,9 @@
         const catBtn = document.getElementById("getCat")
         const personBtn = document.getElementById("randomPerson")
         const personOut = document.getElementById("person")
+        const wordInput = document.getElementById("word")
+        const wordBtn = document.getElementById("getWord")
+        const wordOut = document.getElementById("wordOut")
 
         const xhr = new XMLHttpRequest()
         
@@ -67,6 +74,31 @@
                     let outputString = "Neme: " + person.gender + ", Név: " + person.name.last + " " + person.name.first + ", E-mail: " + person.email
 
                     personOut.textContent = outputString
+                }
+            }
+            xhr.send()
+        })
+
+        wordBtn.addEventListener("click", function(){
+            xhr.open("GET", "https://api.dictionaryapi.dev/api/v2/entries/en/"+wordInput.value, true)
+            xhr.onload = function(){
+                if (xhr.status === 200){
+                    let resp = JSON.parse(xhr.response)
+                    let wordData = resp[0]
+
+                    wordOut.innerHTML = ""
+
+                    for (i = 0; i < wordData.meanings.length; i++){
+                        var listLine = document.createElement("li")
+                        listLine.textContent = wordData.meanings[i].definitions[0].definition
+                        wordOut.appendChild(listLine)
+                    }
+                }
+                else if (xhr.status == 404){
+                    wordOut.innerHTML = ""
+                    var listLine = document.createElement("li")
+                    listLine.textContent = "A keresett szó nem található 😭😭😭"
+                    wordOut.appendChild(listLine)
                 }
             }
             xhr.send()
