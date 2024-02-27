@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class=" list-group-item">
+                    <h1>Új jegyzet</h1>
+                    <form>
+                        <div class="mb-3">
+                            <label for="titleInput" class="form-label">Cím</label>
+                            <input type="text" class="form-control" id="titleInput" placeholder="Add meg a címet">
+                        </div>
+                        <div class="mb-3">
+                            <label for="noteInput" class="form-label">Jegyzet</label>
+                            <textarea class="form-control" id="noteInput" rows="3"
+                                placeholder="Írd ide a jegyzetet"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="prioritySelect">Prioritás:</label>
+                            <select class="form-control" id="prioritySelect">
+                                <option value="Fontos">Fontos</option>
+                                <option value="Későbbre halasztva">Későbbre halasztva</option>
+                                <option value="Továbbítani">Továbbítani</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <button class="btn btn-primary" id="sendNote">Jegyzet hozzáadása</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="editForm" style="display: none;" class="list-group-item">
+                    <form>
+                        <h2>Jegyzet szerkesztése</h2>
+                        <div class="mb-3">
+                            <label for="editId" class="form-label">ID</label>
+                            <input type="text" class="form-control" id="editId" disabled="true">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edittitleInput" class="form-label">Cím</label>
+                            <input type="text" class="form-control" id="edittitleInput">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editnoteInput" class="form-label">Jegyzet</label>
+                            <textarea class="form-control" id="editnoteInput" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <button class="btn btn-primary" id="editNote">Jegyzet szerkesztése</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <h1>Jegyzetek</h1>
+                <ul class="list-group" id="messageList">
+
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.8.1/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAn8vP68qROt2UxcZgm9nwTYGiZeDNkZRg",
+            authDomain: "jegyzet-436db.firebaseapp.com",
+            projectId: "jegyzet-436db",
+            storageBucket: "jegyzet-436db.appspot.com",
+            messagingSenderId: "756819752320",
+            appId: "1:756819752320:web:16e99ee6ace602bb8bbd65"
+        };
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(app);
+        const titleInput = document.getElementById("titleInput")
+        const noteInput = document.getElementById("noteInput")
+        const priorityInput = document.getElementById("prioritySelect")
+        const sendBtn = document.getElementById("sendNote")
+        const msgList = document.getElementById("messageList")
+        const editBtn = document.getElementById("editNote")
+
+        sendBtn.addEventListener("click", function (e) {
+            e.preventDefault()
+            const title = titleInput.value
+            const msg = noteInput.value
+            const priority = priorityInput.value
+            db.collection("jegyzetek").add({ cim: title, jegyzet: msg, statusz: priority })
+                .then((docRef) => {
+                    console.log(docRef)
+                })
+                .catch((e) => {
+                    console.error(e)
+                })
+        })
+
+        editBtn.addEventListener("click", function (e) {
+            e.preventDefault()
+            const docId = document.getElementById("editId").value;
+            if (docId) {
+                const docRef = db.collection("jegyzetek").doc(docId);
+                docRef.update({
+                    cim: document.getElementById("edittitleInput").value,
+                    jegyzet: document.getElementById("editnoteInput").value
+                }).then(() => {
+                    console.log("Document updated with ID: ", docRef.id)
+                    document.getElementById("editForm").style.display = "none"
+                }).catch(error => {
+                    console.error("Error updating document: ", error);
+                });
+            }
+        })
+
+        db.collection("jegyzetek").onSnapshot((querySnapshot) => {
+            msgList.innerHTML = ""
+            querySnapshot.forEach((doc) => {
+                const listElement = document.createElement("li")
+                const edit = document.createElement("button")
+                const msg = doc.data()
+                edit.innerText = "Szerkeszt"
+                edit.classList = "btn btn-outline-primary m-1 btn-sm"
+                edit.style = "float: right;"
+                edit.onclick = function () {
+                    document.getElementById("editForm").style.display = "block"
+                    document.getElementById("editId").value = doc.id
+                    document.getElementById("editnoteInput").value = msg.jegyzet
+                    document.getElementById("edittitleInput").value = msg.cim
+                }
+                const del = document.createElement("button")
+                del.innerText = "Törlés"
+                del.classList = "btn btn-danger m-1 btn-sm"
+                del.style = "float: right;"
+                del.onclick = function() {
+                    db.collection("jegyzetek").doc(doc.id).delete().then(() => {
+                        console.log("Document successfully deleted!");
+                    }).catch((error) => {
+                        console.error("Error removing document: ", error);
+                    });
+                }
+                listElement.classList = "list-group-item"
+                listElement.innerHTML = "<b>"+msg.cim+"</b>" + ":<br>" + msg.jegyzet
+                console.log(msg)
+                const priority = priorityInput.cloneNode(true)
+                priority.value = msg.statusz
+                priority.onchange = function () {
+                    const docRef = db.collection("jegyzetek").doc(doc.id);
+                    docRef.update({
+                        statusz: this.value
+                    }).then(() => {
+                        console.log("Document updated with ID: ", docRef.id)
+                        document.getElementById("editForm").style.display = "none"
+                    }).catch(error => {
+                        console.error("Error updating document: ", error);
+                    });
+                }
+                listElement.appendChild(priority)
+                msgList.appendChild(listElement)
+                listElement.appendChild(edit)
+                listElement.appendChild(del)
+            })
+        })
+    </script>
+</body>
+
+</html>
