@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let cars = []
+        let usernames = new Set()
+        let cities = new Map()
+
+        function addCar(brand, model, prodyear, color) {
+            cars.push({ brand: brand, model: model, prodyear: prodyear, color: color })
+        }
+        function listCars() {
+            for (i = 0; i < cars.length; i++) {
+                let car = cars[i]
+                console.log(car.brand + " " + car.model + " (" + car.prodyear + ") - " + car.color)
+            }
+        }
+
+        function felhasznaloNevHozzaadasa(usr) {
+            if (usernames.has(usr)) { return false }
+            usernames.add(usr)
+            return true
+        }
+        function felhasznaloNevekListazasa() {
+            usernames.forEach(function (value) {
+                console.log(value)
+            })
+        }
+
+        function addCity(city, population) {
+            cities.set(city, population)
+        }
+        function deleteCity(city) {
+            cities.delete(city)
+        }
+        function listCities() {
+            cities.forEach(function (population, city) {
+                console.log(city+": "+population)
+            })
+        }
+    </script>
+</body>
+
+</html>
